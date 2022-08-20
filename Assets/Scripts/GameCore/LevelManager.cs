@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using DG.Tweening;
-using Pool;
+using Pools;
 using ScriptableObjects;
 using UnityEngine;
 
@@ -17,7 +17,7 @@ namespace GameCore
         // Called by GameManager.cs when "Game" scene is loaded. 
         public void HandleNewLevel()
         {
-            TemplatePool.Instance.InitializeItemPoolDict();
+            StackPool.Instance.InitializeItemPoolDict();
             
             OnNewLevelLoaded?.Invoke();
         }

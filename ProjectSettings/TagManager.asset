@@ -11,20 +11,20 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - Platform/SafePlatform
-  - Platform/UnsafePlatform
-  - Platform/PlatformGroup
-  - Manager&Spawner&Container&Pool
-  - Cylinder
   - TouchController
-  - Ball
-  - Platform/LastPlatform
-  - Splash
-  - Platform/UnsafeLongPlatform
-  - Bottle/Green
-  - Bottle/Blue
+  - Managers
+  - Containers
+  - Player
+  - Stack
+  - Finish
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
   - 
   - 
   - 

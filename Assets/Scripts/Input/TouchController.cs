@@ -6,40 +6,14 @@ using UnityEngine.EventSystems;
 
 namespace Input
 {
-    public class TouchController : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler
+    public class TouchController : MonoBehaviour, IPointerDownHandler
     {
-        public static event Action<Vector3> OnPlayerDragged;
-        public static event Action<Vector3> OnPlayerTapped;
+        public static event Action OnPlayerTapped;
 
         private UnityEngine.Camera mainCam;
         private Vector3 lastDragWorldPosition;
 
         private bool isGameActive;
-        
-        public void OnBeginDrag(PointerEventData eventData)
-        {
-            if (!isGameActive) {return;}
-            
-            lastDragWorldPosition = ConvertScreenToWorldPosition(eventData);
-        }
-
-        public void OnDrag(PointerEventData eventData)
-        {
-            if (!isGameActive) {return;}
-            
-            var currentDragWorldPosition = ConvertScreenToWorldPosition(eventData);
-            
-            OnPlayerDragged?.Invoke(currentDragWorldPosition - lastDragWorldPosition);
-
-            lastDragWorldPosition = currentDragWorldPosition;
-        }
-
-        private Vector3 ConvertScreenToWorldPosition(PointerEventData eventData)
-        {
-            var screenPos = new Vector3(eventData.position.x, eventData.position.y, mainCam.nearClipPlane);
-
-            return mainCam.ScreenToWorldPoint(screenPos);
-        }
 
         private void SetMainCamera()
         {
@@ -84,7 +58,7 @@ namespace Input
 
             var currentTapPosition = eventData.pointerCurrentRaycast.worldPosition;
             
-            OnPlayerTapped?.Invoke(currentTapPosition);
+            OnPlayerTapped?.Invoke();
         }
     }
 }

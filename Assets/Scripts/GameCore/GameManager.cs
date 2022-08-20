@@ -1,5 +1,4 @@
 using System;
-using Camera;
 using DG.Tweening;
 using UI;
 using UnityEngine;
@@ -26,6 +25,15 @@ namespace GameCore
             ScoreManager.Instance.Initialize(gameInfo.BestScore);
             
             DOTween.SetTweensCapacity(TWEEN_CAPACITY, 0);
+            
+            LoadGameScene();
+        }
+
+        private void Update()
+        {
+            if (!UnityEngine.Input.GetKeyDown(KeyCode.R)) {return;}
+            
+            SceneManager.UnloadSceneAsync((int)gameInfo.CurrentScene);
             
             LoadGameScene();
         }

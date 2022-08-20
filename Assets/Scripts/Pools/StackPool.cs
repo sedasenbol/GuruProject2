@@ -1,21 +1,24 @@
 using System.Collections.Generic;
+using Game;
 using ScriptableObjects;
 using UnityEngine;
 
-namespace Pool
+namespace Pools
 {
-    public abstract class Pool : MonoBehaviour
+    public class StackPool : Singleton<StackPool>
     {
         [SerializeField] private PoolSettingsScriptableObject poolSettings;
         [SerializeField] private Transform containerTransform;
         
+        private Material[] materialsArray;
         private Queue<GameObject> itemPoolQueue;
 
         public Transform SpawnFromPool(Vector3 position, Quaternion rotation)
         {
             var objectSpawned = itemPoolQueue.Dequeue();
             objectSpawned.SetActive(true);
-        
+            objectSpawned.GetComponent<Stack>().Reset();
+            
             var objectSpawnedTransform = objectSpawned.transform;
             objectSpawnedTransform.position = position;
             objectSpawnedTransform.rotation = rotation;
@@ -31,18 +34,27 @@ namespace Pool
         public void InitializeItemPoolDict()
         {
             itemPoolQueue = new Queue<GameObject>(poolSettings.PoolSize);
+
+            LoadMaterials();
             
             InitializeItemPool(poolSettings.PoolSize, itemPoolQueue);
         }
-   
+
+        private void LoadMaterials()
+        {
+            materialsArray = Resources.LoadAll<Material>("Materials");
+        }
+
         private void InitializeItemPool(int poolSize, Queue<GameObject> newItemPool)
         {
             for (var j = 0; j < poolSize; j++)
             {
-                var obj = Instantiate(poolSettings.ItemPrefab, new Vector3(0f, -100f, 0f), Quaternion.identity,
-                    gameObject.transform).gameObject;
-                obj.SetActive(false);
-                newItemPool.Enqueue(obj);
+                var itemGO = Instantiate(poolSettings.ItemPrefab, new Vector3(0f, -100f, 0f), Quaternion.identity,
+                    containerTransform).gameObject;
+                itemGO.GetComponent<Renderer>().material = materialsArray[Random.Range(0, materialsArray.Length)];
+                itemGO.SetActive(false);
+                
+                newItemPool.Enqueue(itemGO);
             }
         }
 

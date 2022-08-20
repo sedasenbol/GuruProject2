@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9091027223259232730}
-  - component: {fileID: 2423787054997508628}
-  m_Layer: 0
+  - component: {fileID: 1615213039}
+  m_Layer: 7
   m_Name: Pools
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2423787054997508628
+--- !u!114 &1615213039
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,8 +41,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 9091027223259232728}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e2d4416497245be87dd82b17e94372f, type: 3}
+  m_Script: {fileID: 11500000, guid: 4957e41130c44b7d8353741d497ca96f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolSettings: {fileID: 11400000, guid: 697877799afe4466288536f7b972207f, type: 2}
+  poolSettings: {fileID: 11400000, guid: 13735e535ec4a4310b920cd969689250, type: 2}
   containerTransform: {fileID: 0}
