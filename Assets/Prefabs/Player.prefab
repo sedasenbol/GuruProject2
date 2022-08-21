@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8849706318715696525}
   - component: {fileID: 5599161785063211919}
   - component: {fileID: 8684751696963860106}
-  - component: {fileID: 8849706317370310313}
+  - component: {fileID: 8849706317370310311}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -63,11 +63,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd8b432bc9c84c0fb2fd941226b0017b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smoothDampSmoothTime: 0.3
-  maxSpeed: 1
-  targetPosOffset: {x: 0, y: 0, z: 10}
---- !u!65 &8849706317370310313
-BoxCollider:
+  smoothDampSmoothTime: 0.02
+  smoothDampMaxSpeed: 10
+  horizontalSpeed: 1.2
+--- !u!136 &8849706317370310311
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -76,9 +76,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.4451651, y: 1.2243465, z: 0.38968086}
-  m_Center: {x: 0.00000014901161, y: 0.5994633, z: 0.008442879}
+  m_Radius: 0.141783
+  m_Height: 2.130188
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.565094, z: -0.044924974}
 --- !u!1001 &8272749609003744717
 PrefabInstance:
   m_ObjectHideFlags: 0

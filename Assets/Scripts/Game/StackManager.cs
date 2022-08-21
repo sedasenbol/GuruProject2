@@ -9,6 +9,8 @@ namespace Game
 {
     public class StackManager : MonoBehaviour
     {
+        public static event Action<int> OnStackMatch; 
+
         [SerializeField] private float stackMatchTolerance = 0.3f;
 
         private Transform LastStackTransform => StackActivator.Instance.LastStackTransform;
@@ -44,9 +46,7 @@ namespace Game
 
             if (playerFollowStackXMin > lastStackXMax || playerFollowStackXMax < lastStackXMin)
             {
-                var rb = LastStackTransform.gameObject.AddComponent<Rigidbody>();
-                rb.useGravity = true;
-                rb.isKinematic = false;
+                LastStackTransform.GetComponent<Stack>().MyState = StackState.Falling;
                 return;
             }
 
@@ -78,12 +78,14 @@ namespace Game
             LastStackTransform.localScale = newStackScale;
 
             StackActivator.Instance.ActivateNewStack(newStackScale);
+
+            stackMatchCounter = 0;
         }
 
         private void HandleNewStackMatch()
         {
             stackMatchCounter++;
-            Debug.Log(stackMatchCounter);
+            OnStackMatch?.Invoke(stackMatchCounter);
             
             var lastStackPos = LastStackTransform.position;
             

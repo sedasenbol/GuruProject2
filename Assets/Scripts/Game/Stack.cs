@@ -12,7 +12,10 @@ namespace Game
         BehindThePlayer,
         CollisionWithThePlayer,
         WaitingForThePlayer,
+        WillStartToMove,
         Moving,
+        WillStop,
+        Falling
     }
     
     
@@ -23,6 +26,7 @@ namespace Game
         
         private Transform myTransform;
         private int playerLayer;
+        private int finishLayer;
         private bool shouldMove;
         private MeshRenderer myMeshRenderer;
         
@@ -32,6 +36,7 @@ namespace Game
             myMeshRenderer = GetComponent<MeshRenderer>();
             
             playerLayer = LayerMask.NameToLayer("Player");
+            finishLayer = LayerMask.NameToLayer("Finish");
         }
 
         private void OnDestroy()
@@ -59,6 +64,8 @@ namespace Game
         {
             if (state != StackState.Moving) {return;}
 
+            state = StackState.WillStop;
+            
             StartCoroutine(ChangeStateNextFrame());
         }
 
@@ -71,6 +78,11 @@ namespace Game
 
         private void OnTriggerEnter(Collider other)
         {
+            if (other.gameObject.layer == finishLayer)
+            {
+                state = StackState.Falling;
+            }
+            
             if (other.gameObject.layer != playerLayer) {return;}
             
             if (state != StackState.WaitingForThePlayer) {return;}
@@ -88,17 +100,31 @@ namespace Game
         }
 
         private void Update()
-        { 
-            if (state != StackState.Moving) {return;}
-            
-            myTransform.position += stackSettings.StackVelocity * Time.deltaTime;
+        {
+            switch (state)
+            {
+                case StackState.Moving:
+                    myTransform.position += Vector3.left * (stackSettings.StackSpeed * Time.deltaTime);
+                    break;
+                case StackState.Falling:
+                    myTransform.position += Vector3.down * (stackSettings.StackSpeed * Time.deltaTime);
+                    break;
+                case StackState.WillStartToMove:
+                    state = StackState.Moving;
+                    break;
+            }
         }
 
         public void Reset(Material newMaterial)
         {
-            state = StackState.Moving;
+            state = StackState.WillStartToMove;
 
             myMeshRenderer.material = newMaterial;
+        }
+        
+        public StackState MyState 
+        {
+            set => state = value;
         }
     }
 }

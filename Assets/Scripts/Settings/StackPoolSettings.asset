@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bfa6af44d6b14deb925603a00958d6e, type: 3}
   m_Name: StackPoolSettings
   m_EditorClassIdentifier: 
-  poolSize: 20
+  poolSize: 40
   itemPrefab: {fileID: 8979710526699951981, guid: 6e7a5e3bb547144bfb3c56d3bb0a4982, type: 3}

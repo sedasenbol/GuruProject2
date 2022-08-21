@@ -32,8 +32,15 @@ namespace GameCore
         private void Update()
         {
             if (!UnityEngine.Input.GetKeyDown(KeyCode.R)) {return;}
-            
+
+            RestartGame();
+        }
+
+        private void RestartGame()
+        {
             SceneManager.UnloadSceneAsync((int)gameInfo.CurrentScene);
+
+            UIManager.Instance.HandleRestart();
             
             LoadGameScene();
         }

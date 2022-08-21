@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b4f9ab8abfe4784976baf1a6bbadfcf, type: 3}
   m_Name: StackSettings
   m_EditorClassIdentifier: 
-  stackVelocity: {x: -5, y: 0, z: 0}
+  stackSpeed: 4.8
   stackSpawnXPos: 10

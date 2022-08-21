@@ -62,6 +62,12 @@ namespace UI
             OnResumeButtonClicked?.Invoke();
         }
 
+        public void HandleRestart()
+        {
+            successPanel.SetActive(false);
+            gameOverPanel.SetActive(false);
+        }
+        
         public void HandleTapToContinueClick()
         {
             OnTapToContinueButtonClicked?.Invoke();

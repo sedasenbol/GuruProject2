@@ -9,12 +9,13 @@ namespace Game
     public class Player : MonoBehaviour
     {
         [SerializeField] private float smoothDampSmoothTime = 0.3f;
-        [SerializeField] private float maxSpeed = 1f;
-        [SerializeField] private Vector3 targetPosOffset = Vector3.forward * 10f;
-
+        [SerializeField] private float smoothDampMaxSpeed = 1f;
+        [SerializeField] private float horizontalSpeed = 1f;
+        [SerializeField] private Animator animator;
+        
         private bool isGameActive;
         private Transform myTransform;
-        private Vector3 velocity;
+        private Vector3 smoothDampVelocity;
         private Vector3 startPos;
         private int stackLayer;
         private Rigidbody rb;
@@ -58,6 +59,9 @@ namespace Game
             rb.useGravity = false;
             rb.isKinematic = true;
             
+            animator.SetBool("run", true);
+            animator.SetBool("dance", false);
+            
             myTransform.position = startPos;
         }
 
@@ -71,6 +75,9 @@ namespace Game
         private void OnLevelCompleted()
         {
             isGameActive = false;
+            
+            animator.SetBool("dance", true);
+            animator.SetBool("run", false);
         }
 
         private void OnLevelFailed()
@@ -111,12 +118,14 @@ namespace Game
             if (!isGameActive) {return;}
 
             var myPos = myTransform.position;
-            var targetPos = StackActivator.Instance.PlayerFollowStackTransform.position;
-
-            targetPos.y = myPos.y;
             
-            myTransform.position = Vector3.SmoothDamp(myPos, targetPos + targetPosOffset,
-                ref velocity, smoothDampSmoothTime, maxSpeed);
+            var playerFollowPos = StackActivator.Instance.PlayerFollowStackTransform.position;
+            var smoothDampPosX = Vector3.SmoothDamp(myPos, playerFollowPos, ref smoothDampVelocity, smoothDampSmoothTime, smoothDampMaxSpeed).x;
+
+            var mixedPos = myPos + horizontalSpeed * Time.deltaTime * Vector3.forward;
+            mixedPos.x = smoothDampPosX;
+
+            myTransform.position = mixedPos;
         }
     }
 }
