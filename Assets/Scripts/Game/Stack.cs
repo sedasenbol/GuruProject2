@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Input;
+using InputHandler;
 using ScriptableObjects;
 using UnityEngine;
 
@@ -25,10 +25,8 @@ namespace Game
         private int playerLayer;
         private bool shouldMove;
         private MeshRenderer myMeshRenderer;
-
-        // material kendi degistirsin
-
-        private void Start()
+        
+        private void Awake()
         {
             myTransform = transform;
             myMeshRenderer = GetComponent<MeshRenderer>();
@@ -55,10 +53,6 @@ namespace Game
         private void OnPlayerTapped()
         {
             if (state != StackState.Moving) {return;}
-            
-            if (!myMeshRenderer.isVisible) {return;}
-            
-            state = StackState.WaitingForThePlayer;
 
             StartCoroutine(ActivateNewStackNextFrame());
         }
@@ -67,7 +61,9 @@ namespace Game
         {
             yield return null;
             
-            StackActivator.Instance.ActivateNewStack();
+            if (!StackActivator.Instance.TryActivatingNewStack(myTransform.position)) {yield break;}
+
+            state = StackState.WaitingForThePlayer;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -95,9 +91,11 @@ namespace Game
             myTransform.position += stackSettings.StackVelocity * Time.deltaTime;
         }
 
-        public void Reset()
+        public void Reset(Material newMaterial)
         {
             state = StackState.Moving;
+
+            myMeshRenderer.material = newMaterial;
         }
     }
 }

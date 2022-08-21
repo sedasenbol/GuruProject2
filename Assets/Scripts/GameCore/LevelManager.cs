@@ -13,23 +13,33 @@ namespace GameCore
         public static event Action OnNewLevelLoaded;
         public static event Action OnLevelFailed;
         public static event Action OnLevelCompleted;
-        
+
+        private bool isGameActive;
+
         // Called by GameManager.cs when "Game" scene is loaded. 
         public void HandleNewLevel()
         {
-            StackPool.Instance.InitializeItemPoolDict();
+            isGameActive = true;
             
             OnNewLevelLoaded?.Invoke();
         }
 
         public void FailLevel()
         {
+            if (!isGameActive) {return;}
+
+            isGameActive = false;
+            
             DOTween.CompleteAll();
             OnLevelFailed?.Invoke();
         }
         
         public void CompleteLevel()
         {
+            if (!isGameActive) {return;}
+
+            isGameActive = false;
+
             DOTween.CompleteAll();
             OnLevelCompleted?.Invoke();
         }

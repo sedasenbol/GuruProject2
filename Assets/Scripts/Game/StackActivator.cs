@@ -1,6 +1,5 @@
 using System;
 using GameCore;
-using Input;
 using Pools;
 using ScriptableObjects;
 using UnityEngine;
@@ -12,12 +11,30 @@ namespace Game
     {
         [SerializeField] private StackSettingsScriptableObject stackSettings;
         [SerializeField] private Transform lastStackTransform;
-        [SerializeField] private Transform playerStack;
+        [SerializeField] private Transform playerFollowStack;
+        [SerializeField] private float stackSpawnMaxZDistanceFromCamera = 40f;
 
+        private Transform mainCamTransform;
 
-        public void ActivateNewStack()
+        private void Start()
         {
-            playerStack = lastStackTransform;
+            if (Camera.main != null) {mainCamTransform = Camera.main.transform;}
+            else
+            {
+                
+            }
+        }
+
+        private void OnDestroy()
+        {
+            mainCamTransform = null;
+        }
+
+        public bool TryActivatingNewStack(Vector3 stackPos)
+        {
+            if (stackPos.z - mainCamTransform.position.z > stackSpawnMaxZDistanceFromCamera) { return false;}
+            
+            playerFollowStack = lastStackTransform;
             
             var bounds = lastStackTransform.GetComponent<Renderer>().bounds;
             var oldStackPos = lastStackTransform.position;
@@ -30,8 +47,10 @@ namespace Game
             };
 
             lastStackTransform = StackPool.Instance.SpawnFromPool(newStackInitialPos, Quaternion.identity);
+
+            return true;
         }
 
-        public Transform PlayerStack => playerStack;
+        public Transform PlayerFollowStack => playerFollowStack;
     }
 }

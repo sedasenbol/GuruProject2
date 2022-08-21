@@ -1,10 +1,9 @@
 using System;
 using GameCore;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Input
+namespace InputHandler
 {
     public class TouchController : MonoBehaviour, IPointerDownHandler
     {

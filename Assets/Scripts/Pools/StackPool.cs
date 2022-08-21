@@ -17,7 +17,9 @@ namespace Pools
         {
             var objectSpawned = itemPoolQueue.Dequeue();
             objectSpawned.SetActive(true);
-            objectSpawned.GetComponent<Stack>().Reset();
+
+            var randomMaterial = materialsArray[Random.Range(0, materialsArray.Length)];
+            objectSpawned.GetComponent<Stack>().Reset(randomMaterial);
             
             var objectSpawnedTransform = objectSpawned.transform;
             objectSpawnedTransform.position = position;
@@ -30,8 +32,7 @@ namespace Pools
             return objectSpawnedTransform;
         }
 
-        //Called by LevelManager.cs when a new level loads.
-        public void InitializeItemPoolDict()
+        private void Start()
         {
             itemPoolQueue = new Queue<GameObject>(poolSettings.PoolSize);
 
@@ -40,25 +41,23 @@ namespace Pools
             InitializeItemPool(poolSettings.PoolSize, itemPoolQueue);
         }
 
-        private void LoadMaterials()
-        {
-            materialsArray = Resources.LoadAll<Material>("Materials");
-        }
-
         private void InitializeItemPool(int poolSize, Queue<GameObject> newItemPool)
         {
             for (var j = 0; j < poolSize; j++)
             {
-                var itemGO = Instantiate(poolSettings.ItemPrefab, new Vector3(0f, -100f, 0f), Quaternion.identity,
+                var itemGo = Instantiate(poolSettings.ItemPrefab, new Vector3(0f, -100f, 0f), Quaternion.identity,
                     containerTransform).gameObject;
-                itemGO.GetComponent<Renderer>().material = materialsArray[Random.Range(0, materialsArray.Length)];
-                itemGO.SetActive(false);
+                itemGo.SetActive(false);
                 
-                newItemPool.Enqueue(itemGO);
+                newItemPool.Enqueue(itemGo);
             }
         }
 
-        private void OnDisable()
+        private void LoadMaterials()
+        {
+            materialsArray = Resources.LoadAll<Material>("Materials");
+        }
+        private void OnDestroy()
         {
             itemPoolQueue = null;
         }

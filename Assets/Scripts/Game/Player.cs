@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using GameCore;
 using UnityEditor;
 using UnityEngine;
@@ -15,16 +16,25 @@ namespace Game
         private Transform myTransform;
         private Vector3 velocity;
         private Vector3 startPos;
+        private int stackLayer;
+        private Rigidbody rb;
+        private GameObject stackUnder;
         
-        private void Start()
+        private void Awake()
         {
+            rb = GetComponent<Rigidbody>();
             myTransform = transform;
+            
             startPos = myTransform.position;
+
+            stackLayer = LayerMask.NameToLayer("Stack");
         }
 
         private void OnDestroy()
         {
+            rb = null;
             myTransform = null;
+            stackUnder = null;
         }
 
         private void OnEnable()
@@ -43,9 +53,19 @@ namespace Game
 
         private void OnNewLevelLoaded()
         {
-            isGameActive = true;
+            StartCoroutine(ActivateTheGameNextFrame());
+                        
+            rb.useGravity = false;
+            rb.isKinematic = true;
             
             myTransform.position = startPos;
+        }
+
+        private IEnumerator ActivateTheGameNextFrame()
+        {
+            yield return null;
+            
+            isGameActive = true;
         }
 
         private void OnLevelCompleted()
@@ -58,12 +78,40 @@ namespace Game
             isGameActive = false;
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!isGameActive) {return;}
+            
+            if (other.gameObject.layer != stackLayer) {return;}
+
+            stackUnder = other.gameObject;
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (!isGameActive) {return;}
+            
+            if (other.gameObject.layer != stackLayer) {return;}
+
+            if (other.gameObject != stackUnder) {return;}
+            
+            StartFalling();
+
+            LevelManager.Instance.FailLevel();
+        }
+
+        private void StartFalling()
+        {
+            rb.useGravity = true;
+            rb.isKinematic = false;
+        }
+
         private void Update()
         {
             if (!isGameActive) {return;}
 
             var myPos = myTransform.position;
-            var targetPos = StackActivator.Instance.PlayerStack.position;
+            var targetPos = StackActivator.Instance.PlayerFollowStack.position;
 
             targetPos.y = myPos.y;
             
