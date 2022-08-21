@@ -42,6 +42,11 @@ namespace Game
 
         private void OnEnable()
         {
+            if (TryGetComponent<Rigidbody>(out var rb))
+            {
+                Destroy(rb);
+            }
+            
             TouchController.OnPlayerTapped += OnPlayerTapped;
         }
 
@@ -54,15 +59,13 @@ namespace Game
         {
             if (state != StackState.Moving) {return;}
 
-            StartCoroutine(ActivateNewStackNextFrame());
+            StartCoroutine(ChangeStateNextFrame());
         }
 
-        private IEnumerator ActivateNewStackNextFrame()
+        private IEnumerator ChangeStateNextFrame()
         {
             yield return null;
             
-            if (!StackActivator.Instance.TryActivatingNewStack(myTransform.position)) {yield break;}
-
             state = StackState.WaitingForThePlayer;
         }
 

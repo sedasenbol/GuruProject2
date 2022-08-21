@@ -11,18 +11,14 @@ namespace Game
     {
         [SerializeField] private StackSettingsScriptableObject stackSettings;
         [SerializeField] private Transform lastStackTransform;
-        [SerializeField] private Transform playerFollowStack;
+        [SerializeField] private Transform playerFollowStackTransform;
         [SerializeField] private float stackSpawnMaxZDistanceFromCamera = 40f;
 
         private Transform mainCamTransform;
 
         private void Start()
-        {
-            if (Camera.main != null) {mainCamTransform = Camera.main.transform;}
-            else
-            {
-                
-            }
+        { 
+            mainCamTransform = Camera.main.transform;
         }
 
         private void OnDestroy()
@@ -30,11 +26,15 @@ namespace Game
             mainCamTransform = null;
         }
 
-        public bool TryActivatingNewStack(Vector3 stackPos)
+        public void ActivateNewStack(Vector3 scale)
         {
-            if (stackPos.z - mainCamTransform.position.z > stackSpawnMaxZDistanceFromCamera) { return false;}
+            if (playerFollowStackTransform.position.z - mainCamTransform.position.z > stackSpawnMaxZDistanceFromCamera)
+            {
+                LevelManager.Instance.FailLevel();
+                return ;
+            }
             
-            playerFollowStack = lastStackTransform;
+            playerFollowStackTransform = lastStackTransform;
             
             var bounds = lastStackTransform.GetComponent<Renderer>().bounds;
             var oldStackPos = lastStackTransform.position;
@@ -47,10 +47,10 @@ namespace Game
             };
 
             lastStackTransform = StackPool.Instance.SpawnFromPool(newStackInitialPos, Quaternion.identity);
-
-            return true;
+            lastStackTransform.localScale = scale;
         }
 
-        public Transform PlayerFollowStack => playerFollowStack;
+        public Transform PlayerFollowStackTransform => playerFollowStackTransform;
+        public Transform LastStackTransform => lastStackTransform;
     }
 }

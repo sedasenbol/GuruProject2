@@ -111,7 +111,7 @@ namespace Game
             if (!isGameActive) {return;}
 
             var myPos = myTransform.position;
-            var targetPos = StackActivator.Instance.PlayerFollowStack.position;
+            var targetPos = StackActivator.Instance.PlayerFollowStackTransform.position;
 
             targetPos.y = myPos.y;
             
