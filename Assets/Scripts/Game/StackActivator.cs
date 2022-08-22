@@ -35,7 +35,7 @@ namespace Game
 
             var newStackInitialPos = new Vector3()
             {
-                x = stackSettings.StackSpawnXPos,
+                x = + playerFollowStackTransform.position.x + stackSettings.StackSpawnOffset,
                 y = oldStackPos.y,
                 z = oldStackPos.z + bounds.size.z
             };

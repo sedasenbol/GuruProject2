@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using GameCore;
+using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,9 +9,7 @@ namespace Game
 {
     public class Player : MonoBehaviour
     {
-        [SerializeField] private float smoothDampSmoothTime = 0.3f;
-        [SerializeField] private float smoothDampMaxSpeed = 1f;
-        [SerializeField] private float horizontalSpeed = 1f;
+        [SerializeField] private PlayerSettingsScriptableObject playerSettings;
         [SerializeField] private Animator animator;
         
         private bool isGameActive;
@@ -132,9 +131,10 @@ namespace Game
 
             var playerFollowPos = StackActivator.Instance.PlayerFollowStackTransform.position;
             var smoothDampPosX =
-                Vector3.SmoothDamp(myPos, playerFollowPos, ref smoothDampVelocity, smoothDampSmoothTime, smoothDampMaxSpeed).x;
+                Vector3.SmoothDamp(myPos, playerFollowPos, ref smoothDampVelocity, playerSettings.SmoothDampSmoothTime, 
+                playerSettings.SmoothDampMaxSpeed).x;
 
-            var mixedPos = myPos + horizontalSpeed * Time.deltaTime * Vector3.forward;
+            var mixedPos = myPos + playerSettings.HorizontalSpeed * Time.deltaTime * Vector3.forward;
             mixedPos.x = smoothDampPosX;
 
             myTransform.position = mixedPos;

@@ -50,6 +50,8 @@ namespace Game
                 return;
             }
 
+            LastStackTransform.GetComponent<Stack>().MyState = StackState.WaitingForThePlayer;
+
             if (playerFollowStackXMax < lastStackXMax + stackMatchTolerance &&
                 playerFollowStackXMin > lastStackXMin - stackMatchTolerance)
             {

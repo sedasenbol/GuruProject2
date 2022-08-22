@@ -14,14 +14,12 @@ namespace Game
         WaitingForThePlayer,
         WillStartToMove,
         MovingLeft,
-        WillStop,
         Falling
     }
     
     
     public class Stack : MonoBehaviour
     {
-        [SerializeField] private StackSettingsScriptableObject stackSettings;
         [SerializeField] private StackState state = StackState.MovingLeft;
         
         private Transform myTransform;
@@ -43,32 +41,6 @@ namespace Game
         {
             myTransform = null;
             myMeshRenderer = null;
-        }
-
-        private void OnEnable()
-        {
-            TouchController.OnPlayerTapped += OnPlayerTapped;
-        }
-
-        private void OnDisable()
-        {
-            TouchController.OnPlayerTapped -= OnPlayerTapped;
-        }
-
-        private void OnPlayerTapped()
-        {
-            if (state != StackState.MovingLeft) {return;}
-
-            state = StackState.WillStop;
-            
-            StartCoroutine(ChangeStateNextFrame());
-        }
-
-        private IEnumerator ChangeStateNextFrame()
-        {
-            yield return null;
-            
-            state = StackState.WaitingForThePlayer;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -99,10 +71,10 @@ namespace Game
             switch (state)
             {
                 case StackState.MovingLeft:
-                    myTransform.position += Vector3.left * (stackSettings.StackSpeed * Time.deltaTime);
+                    myTransform.position += Vector3.left * (StackSpeedSetter.Instance.StackSpeed * Time.deltaTime);
                     break;
                 case StackState.Falling:
-                    myTransform.position += Vector3.down * (stackSettings.StackSpeed * Time.deltaTime);
+                    myTransform.position += Vector3.down * (StackSpeedSetter.Instance.StackSpeed * Time.deltaTime);
                     break;
                 case StackState.WillStartToMove:
                     state = StackState.MovingLeft;

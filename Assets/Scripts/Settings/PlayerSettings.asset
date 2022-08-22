@@ -7,9 +7,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b4f9ab8abfe4784976baf1a6bbadfcf, type: 3}
-  m_Name: StackSettings
+  m_Script: {fileID: 11500000, guid: 45c298b565bf47ed8f8e21a5c9786bbd, type: 3}
+  m_Name: PlayerSettings
   m_EditorClassIdentifier: 
-  stackSpawnOffset: 10
+  smoothDampSmoothTime: 0.02
+  smoothDampMaxSpeed: 10
+  horizontalSpeed: 1.2
