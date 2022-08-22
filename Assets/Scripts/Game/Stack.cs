@@ -13,7 +13,7 @@ namespace Game
         CollisionWithThePlayer,
         WaitingForThePlayer,
         WillStartToMove,
-        Moving,
+        MovingLeft,
         WillStop,
         Falling
     }
@@ -22,7 +22,7 @@ namespace Game
     public class Stack : MonoBehaviour
     {
         [SerializeField] private StackSettingsScriptableObject stackSettings;
-        [SerializeField] private StackState state = StackState.Moving;
+        [SerializeField] private StackState state = StackState.MovingLeft;
         
         private Transform myTransform;
         private int playerLayer;
@@ -47,11 +47,6 @@ namespace Game
 
         private void OnEnable()
         {
-            if (TryGetComponent<Rigidbody>(out var rb))
-            {
-                Destroy(rb);
-            }
-            
             TouchController.OnPlayerTapped += OnPlayerTapped;
         }
 
@@ -62,7 +57,7 @@ namespace Game
 
         private void OnPlayerTapped()
         {
-            if (state != StackState.Moving) {return;}
+            if (state != StackState.MovingLeft) {return;}
 
             state = StackState.WillStop;
             
@@ -103,14 +98,14 @@ namespace Game
         {
             switch (state)
             {
-                case StackState.Moving:
+                case StackState.MovingLeft:
                     myTransform.position += Vector3.left * (stackSettings.StackSpeed * Time.deltaTime);
                     break;
                 case StackState.Falling:
                     myTransform.position += Vector3.down * (stackSettings.StackSpeed * Time.deltaTime);
                     break;
                 case StackState.WillStartToMove:
-                    state = StackState.Moving;
+                    state = StackState.MovingLeft;
                     break;
             }
         }
@@ -125,6 +120,12 @@ namespace Game
         public StackState MyState 
         {
             set => state = value;
+        }
+        
+        public MeshRenderer MyMeshRenderer
+        {
+            get => MyMeshRenderer = myMeshRenderer;
+            private set => myMeshRenderer = value;
         }
     }
 }

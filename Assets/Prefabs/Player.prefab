@@ -66,6 +66,7 @@ MonoBehaviour:
   smoothDampSmoothTime: 0.02
   smoothDampMaxSpeed: 10
   horizontalSpeed: 1.2
+  animator: {fileID: 7670382831223349961}
 --- !u!136 &8849706317370310311
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -94,6 +95,10 @@ PrefabInstance:
     - target: {fileID: 723301440068063197, guid: 8ebf841af362818409cf000d8f1a2345, type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1782327572533206788, guid: 8ebf841af362818409cf000d8f1a2345, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2088625769398294046, guid: 8ebf841af362818409cf000d8f1a2345, type: 3}
       propertyPath: m_Layer
@@ -248,5 +253,10 @@ PrefabInstance:
 --- !u!4 &4364692135177320627 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5646447060418037118, guid: 8ebf841af362818409cf000d8f1a2345, type: 3}
+  m_PrefabInstance: {fileID: 8272749609003744717}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &7670382831223349961 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 1782327572533206788, guid: 8ebf841af362818409cf000d8f1a2345, type: 3}
   m_PrefabInstance: {fileID: 8272749609003744717}
   m_PrefabAsset: {fileID: 0}

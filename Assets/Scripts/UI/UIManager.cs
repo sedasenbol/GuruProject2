@@ -16,18 +16,14 @@ namespace UI
         [SerializeField] private GameObject pauseButton;
         [SerializeField] private GameObject resumeButton;
         [SerializeField] private TMP_Text completedTMPText;
-        [SerializeField] private TMP_Text scoreTMPText;
-        [SerializeField] private TMP_Text bestScoreTMPText;
         [SerializeField] private GameObject successPanel;
         [SerializeField] private GameObject gameOverPanel;
-        [SerializeField] private Slider progressSlider;
         [SerializeField] private TMP_Text currentLevelText;
         [SerializeField] private TMP_Text nextLevelText;
         
         //Called by GameManager.cs when the main scene loads.
         public void Initialize(int bestScore, int currentLevelIndex)
         {
-            bestScoreTMPText.text = bestScore.ToString("F0");
             currentLevelText.text = (currentLevelIndex + 1).ToString("F0");
             nextLevelText.text = (currentLevelIndex + 2).ToString("F0");
         }
@@ -37,7 +33,6 @@ namespace UI
             pauseButton.SetActive(false);
             resumeButton.SetActive(false);
             gameOverPanel.SetActive(true);
-            bestScoreTMPText.gameObject.SetActive(false);
         }
 
         public void ShowSuccessScreen()
@@ -74,8 +69,6 @@ namespace UI
 
             successPanel.SetActive(false);
             pauseButton.SetActive(true);
-            bestScoreTMPText.gameObject.SetActive(true);
-            progressSlider.value = 0f;
             currentLevelText.text = (GameManager.Instance.GameInformation.CurrentLevelIndex + 1).ToString("F0");
             nextLevelText.text = (GameManager.Instance.GameInformation.CurrentLevelIndex + 2).ToString("F0");
         }
@@ -86,18 +79,10 @@ namespace UI
 
             gameOverPanel.SetActive(false);
             pauseButton.SetActive(true);
-            bestScoreTMPText.gameObject.SetActive(true);
-            progressSlider.value = 0f;
             currentLevelText.text = (GameManager.Instance.GameInformation.CurrentLevelIndex + 1).ToString("F0");
             nextLevelText.text = (GameManager.Instance.GameInformation.CurrentLevelIndex + 2).ToString("F0");
         }
 
-        public void UpdateScoreTexts(int currentScore, int bestScore)
-        {
-            scoreTMPText.text = currentScore.ToString("F0");
-            bestScoreTMPText.text = $"BEST: {bestScore}";
-        }
-        
         private void OnEnable()
         {
             pauseButton.SetActive(true);
@@ -105,9 +90,6 @@ namespace UI
             successPanel.SetActive(false);
             gameOverPanel.SetActive(false);
             completedTMPText.gameObject.SetActive(false);
-            scoreTMPText.gameObject.SetActive(true);
-            bestScoreTMPText.gameObject.SetActive(true);
-            progressSlider.value = 0f;
         }
     }
 }

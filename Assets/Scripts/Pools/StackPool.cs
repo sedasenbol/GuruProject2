@@ -11,45 +11,58 @@ namespace Pools
         [SerializeField] private Transform containerTransform;
         
         private Material[] materialsArray;
-        private Queue<GameObject> itemPoolQueue;
+        private Queue<GameObject> stackPoolQueue;
 
         public Transform SpawnFromPool(Vector3 position, Quaternion rotation)
         {
-            var objectSpawned = itemPoolQueue.Dequeue();
-            objectSpawned.SetActive(true);
+            var dequeuedStack = DequeueObjectFromPool();
 
+            SetStackMaterial(dequeuedStack);
+
+            var dequeuedStackTransform = dequeuedStack.transform;
+            dequeuedStackTransform.position = position;
+            dequeuedStackTransform.rotation = rotation;
+            
+            dequeuedStackTransform.SetParent(containerTransform);
+
+            stackPoolQueue.Enqueue(dequeuedStack);
+            
+            return dequeuedStackTransform;
+        }
+
+        private GameObject DequeueObjectFromPool()
+        {
+            var dequeuedStack = stackPoolQueue.Dequeue();
+            dequeuedStack.SetActive(true);
+            return dequeuedStack;
+        }
+
+        private void SetStackMaterial(GameObject dequeuedStack)
+        {
             var randomMaterial = materialsArray[Random.Range(0, materialsArray.Length)];
-            objectSpawned.GetComponent<Stack>().Reset(randomMaterial);
-            
-            var objectSpawnedTransform = objectSpawned.transform;
-            objectSpawnedTransform.position = position;
-            objectSpawnedTransform.rotation = rotation;
-            
-            objectSpawnedTransform.SetParent(containerTransform);
-
-            itemPoolQueue.Enqueue(objectSpawned);
-            
-            return objectSpawnedTransform;
+            dequeuedStack.GetComponent<Stack>().Reset(randomMaterial);
         }
 
         private void Start()
         {
-            itemPoolQueue = new Queue<GameObject>(poolSettings.PoolSize);
+            stackPoolQueue = new Queue<GameObject>(poolSettings.PoolSize);
 
+            containerTransform = Instantiate(containerTransform);
+            
             LoadMaterials();
             
-            InitializeItemPool(poolSettings.PoolSize, itemPoolQueue);
+            InitializeItemPool(poolSettings.PoolSize, stackPoolQueue);
         }
 
-        private void InitializeItemPool(int poolSize, Queue<GameObject> newItemPool)
+        private void InitializeItemPool(int poolSize, Queue<GameObject> newStackPool)
         {
             for (var j = 0; j < poolSize; j++)
             {
-                var itemGo = Instantiate(poolSettings.ItemPrefab, new Vector3(0f, -100f, 0f), Quaternion.identity,
+                var stackGo = Instantiate(poolSettings.StackPrefab, poolSettings.InitialSpawnPos, Quaternion.identity,
                     containerTransform).gameObject;
-                itemGo.SetActive(false);
+                stackGo.SetActive(false);
                 
-                newItemPool.Enqueue(itemGo);
+                newStackPool.Enqueue(stackGo);
             }
         }
 
@@ -59,7 +72,7 @@ namespace Pools
         }
         private void OnDestroy()
         {
-            itemPoolQueue = null;
+            stackPoolQueue = null;
         }
     }
 }

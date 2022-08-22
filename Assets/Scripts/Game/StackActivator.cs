@@ -13,10 +13,23 @@ namespace Game
         [SerializeField] private Transform lastStackTransform;
         [SerializeField] private Transform playerFollowStackTransform;
 
-        public void ActivateNewStack(Vector3 scale)
+        public Transform ActivateNewStack(Vector3 scale, bool isToFall)
         {
-            playerFollowStackTransform = lastStackTransform;
+            var newStackInitialPos = FindNewStackInitialPos();
+
+            var newStack = StackPool.Instance.SpawnFromPool(newStackInitialPos, Quaternion.identity);
+            newStack.localScale = scale;
+
+            if (isToFall) { return newStack;}
             
+            playerFollowStackTransform = lastStackTransform;
+            lastStackTransform = newStack; 
+
+            return lastStackTransform;
+        }
+
+        private Vector3 FindNewStackInitialPos()
+        {
             var bounds = lastStackTransform.GetComponent<Renderer>().bounds;
             var oldStackPos = lastStackTransform.position;
 
@@ -26,9 +39,7 @@ namespace Game
                 y = oldStackPos.y,
                 z = oldStackPos.z + bounds.size.z
             };
-
-            lastStackTransform = StackPool.Instance.SpawnFromPool(newStackInitialPos, Quaternion.identity);
-            lastStackTransform.localScale = scale;
+            return newStackInitialPos;
         }
 
         public Transform PlayerFollowStackTransform => playerFollowStackTransform;

@@ -9,7 +9,7 @@ namespace Game
 {
     public class StackManager : MonoBehaviour
     {
-        public static event Action<int> OnStackMatch; 
+        public static event Action<int> OnStackMatch;
 
         [SerializeField] private float stackMatchTolerance = 0.3f;
 
@@ -46,21 +46,58 @@ namespace Game
 
             if (playerFollowStackXMin > lastStackXMax || playerFollowStackXMax < lastStackXMin)
             {
-                LastStackTransform.GetComponent<Stack>().MyState = StackState.Falling;
+                HandleMissedStack();
                 return;
             }
 
             if (playerFollowStackXMax < lastStackXMax + stackMatchTolerance &&
                 playerFollowStackXMin > lastStackXMin - stackMatchTolerance)
             {
-                HandleNewStackMatch();
-                StackActivator.Instance.ActivateNewStack(PlayerFollowStackTransform.localScale);
+                HandleStackMatch();
+                StackActivator.Instance.ActivateNewStack(PlayerFollowStackTransform.localScale, false);
                 return;
             }
             
+            HandleStackHalfMatch(playerFollowStackXMax, playerFollowStackXMin, lastStackXMax, lastStackXMin, playerFollowStackBounds);
+        }
+
+        private void HandleStackHalfMatch(float playerFollowStackXMax, float playerFollowStackXMin, float lastStackXMax,
+            float lastStackXMin, Bounds playerFollowStackBounds)
+        {
             var matchXMin = Mathf.Max(playerFollowStackXMin, lastStackXMin);
             var matchXMax = Mathf.Min(playerFollowStackXMax, lastStackXMax);
-            
+
+            var lastStackPos = SetLastStackPos(matchXMin, matchXMax);
+
+            var matchSize = matchXMax - matchXMin;
+
+            var playerFollowStackScale = PlayerFollowStackTransform.localScale;
+            var newStackScale = SetNewStackScale(playerFollowStackBounds, playerFollowStackScale, matchSize);
+
+            StackActivator.Instance.ActivateNewStack(newStackScale, false);
+
+            float fallingStackXMax, fallingStackXMin;
+
+            if (playerFollowStackXMax > lastStackXMax)
+            {
+                fallingStackXMax = Mathf.Max(playerFollowStackXMin, lastStackXMin);
+                fallingStackXMin = Mathf.Min(playerFollowStackXMin, lastStackXMin);
+            }
+            else
+            {
+                fallingStackXMax = Mathf.Max(playerFollowStackXMax, lastStackXMax);
+                fallingStackXMin = Mathf.Min(playerFollowStackXMax, lastStackXMax);
+            }
+
+            var fallingStackScale = SetFallingStackScale(playerFollowStackBounds, playerFollowStackScale, fallingStackXMax, fallingStackXMin);
+
+            CreateAndSetFallingStack(fallingStackScale, fallingStackXMax, fallingStackXMin, lastStackPos);
+
+            stackMatchCounter = 0;
+        }
+
+        private Vector3 SetLastStackPos(float matchXMin, float matchXMax)
+        {
             var lastStackPos = LastStackTransform.position;
             LastStackTransform.position = new Vector3()
             {
@@ -68,21 +105,49 @@ namespace Game
                 y = lastStackPos.y,
                 z = lastStackPos.z
             };
-            
-            var matchSize = matchXMax - matchXMin;
+            return lastStackPos;
+        }
 
-            var playerFollowStackScale = PlayerFollowStackTransform.localScale;
+        private void CreateAndSetFallingStack(Vector3 fallingStackScale, float fallingStackXMax, float fallingStackXMin, Vector3 lastStackPos)
+        {
+            var fallingStackTransform = StackActivator.Instance.ActivateNewStack(fallingStackScale, true);
+            var fallingStack = fallingStackTransform.GetComponent<Stack>();
+
+            fallingStack.MyState = StackState.Falling;
+            fallingStack.MyMeshRenderer.material = PlayerFollowStackTransform.GetComponent<Stack>().MyMeshRenderer.material;
+
+            fallingStackTransform.position = new Vector3()
+            {
+                x = (fallingStackXMax + fallingStackXMin) / 2f,
+                y = lastStackPos.y,
+                z = lastStackPos.z
+            };
+        }
+
+        private Vector3 SetNewStackScale(Bounds playerFollowStackBounds, Vector3 playerFollowStackScale, float matchSize)
+        {
             var newStackScale = playerFollowStackScale;
             newStackScale.x = playerFollowStackScale.x * matchSize / playerFollowStackBounds.size.x;
 
             LastStackTransform.localScale = newStackScale;
-
-            StackActivator.Instance.ActivateNewStack(newStackScale);
-
-            stackMatchCounter = 0;
+            return newStackScale;
         }
 
-        private void HandleNewStackMatch()
+        private static Vector3 SetFallingStackScale(Bounds playerFollowStackBounds, Vector3 playerFollowStackScale,
+            float fallingStackXMax, float fallingStackXMin)
+        {
+            var fallingStackScale = playerFollowStackScale;
+            fallingStackScale.x = playerFollowStackScale.x * (fallingStackXMax - fallingStackXMin) /
+                                  playerFollowStackBounds.size.x;
+            return fallingStackScale;
+        }
+
+        private void HandleMissedStack()
+        {
+            LastStackTransform.GetComponent<Stack>().MyState = StackState.Falling;
+        }
+
+        private void HandleStackMatch()
         {
             stackMatchCounter++;
             OnStackMatch?.Invoke(stackMatchCounter);

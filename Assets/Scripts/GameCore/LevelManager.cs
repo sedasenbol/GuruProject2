@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using DG.Tweening;
 using Pools;
 using ScriptableObjects;
 using UnityEngine;
@@ -30,7 +29,6 @@ namespace GameCore
 
             isGameActive = false;
             
-            DOTween.CompleteAll();
             OnLevelFailed?.Invoke();
         }
         
@@ -40,8 +38,9 @@ namespace GameCore
 
             isGameActive = false;
 
-            DOTween.CompleteAll();
             OnLevelCompleted?.Invoke();
         }
+
+        public bool IsGameActive => isGameActive;
     }
 }

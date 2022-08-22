@@ -18,6 +18,7 @@ namespace Game
         private Vector3 smoothDampVelocity;
         private Vector3 startPos;
         private int stackLayer;
+        private int finishLayer;
         private Rigidbody rb;
         private GameObject stackUnder;
         
@@ -29,6 +30,7 @@ namespace Game
             startPos = myTransform.position;
 
             stackLayer = LayerMask.NameToLayer("Stack");
+            finishLayer = LayerMask.NameToLayer("Finish");
         }
 
         private void OnDestroy()
@@ -88,10 +90,14 @@ namespace Game
         private void OnTriggerEnter(Collider other)
         {
             if (!isGameActive) {return;}
-            
-            if (other.gameObject.layer != stackLayer) {return;}
 
-            stackUnder = other.gameObject;
+            if (other.gameObject.layer == stackLayer)
+            {
+                stackUnder = other.gameObject;    
+            }
+            if (other.gameObject.layer != finishLayer) {return;}
+            
+            LevelManager.Instance.CompleteLevel();
         }
 
         private void OnTriggerExit(Collider other)
@@ -117,10 +123,16 @@ namespace Game
         {
             if (!isGameActive) {return;}
 
+            UpdatePosition();
+        }
+
+        private void UpdatePosition()
+        {
             var myPos = myTransform.position;
-            
+
             var playerFollowPos = StackActivator.Instance.PlayerFollowStackTransform.position;
-            var smoothDampPosX = Vector3.SmoothDamp(myPos, playerFollowPos, ref smoothDampVelocity, smoothDampSmoothTime, smoothDampMaxSpeed).x;
+            var smoothDampPosX =
+                Vector3.SmoothDamp(myPos, playerFollowPos, ref smoothDampVelocity, smoothDampSmoothTime, smoothDampMaxSpeed).x;
 
             var mixedPos = myPos + horizontalSpeed * Time.deltaTime * Vector3.forward;
             mixedPos.x = smoothDampPosX;

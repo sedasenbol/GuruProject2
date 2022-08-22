@@ -1,5 +1,4 @@
 using System;
-using DG.Tweening;
 using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,8 +8,6 @@ namespace GameCore
 {
     public class GameManager : Singleton<GameManager>
     {
-        private const int TWEEN_CAPACITY = 500;
-
         private readonly GameInfo gameInfo = new GameInfo();
 
         private void Start()
@@ -22,16 +19,13 @@ namespace GameCore
             gameInfo.CurrentState = GameInfo.State.Start;
             
             UIManager.Instance.Initialize(gameInfo.BestScore, gameInfo.CurrentLevelIndex);
-            ScoreManager.Instance.Initialize(gameInfo.BestScore);
-            
-            DOTween.SetTweensCapacity(TWEEN_CAPACITY, 0);
-            
+
             LoadGameScene();
         }
 
         private void Update()
         {
-            if (!UnityEngine.Input.GetKeyDown(KeyCode.R)) {return;}
+            if (!Input.GetKeyDown(KeyCode.R)) {return;}
 
             RestartGame();
         }
@@ -48,8 +42,6 @@ namespace GameCore
         private void LoadGameScene()
         {
             SceneManager.LoadScene((int) GameInfo.Scene.Game, LoadSceneMode.Additive);
-            
-            ScoreManager.Instance.ResetCurrentScore();
         }
 
         private void OnLevelFailed()
@@ -129,8 +121,6 @@ namespace GameCore
             
             LevelManager.OnLevelFailed += OnLevelFailed;
             LevelManager.OnLevelCompleted += OnLevelCompleted;
-
-            ScoreManager.OnBestScoreChanged += OnBestScoreChanged; 
             
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -144,8 +134,6 @@ namespace GameCore
             
             LevelManager.OnLevelFailed -= OnLevelFailed;
             LevelManager.OnLevelCompleted -= OnLevelCompleted;
-            
-            ScoreManager.OnBestScoreChanged -= OnBestScoreChanged;
             
             SceneManager.sceneLoaded -= OnSceneLoaded;
 

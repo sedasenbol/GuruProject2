@@ -6,9 +6,11 @@ namespace ScriptableObjects
     public class PoolSettingsScriptableObject : ScriptableObject
     {
         [SerializeField] private int poolSize;
-        [SerializeField] private Transform itemPrefab;
-    
+        [SerializeField] private Transform stackPrefab;
+        [SerializeField] private Vector3 initialSpawnPos = Vector3.one * 1000f;
+        
         public int PoolSize => poolSize;
-        public Transform ItemPrefab => itemPrefab;
+        public Transform StackPrefab => stackPrefab;
+        public Vector3 InitialSpawnPos => initialSpawnPos;
     }
 }
